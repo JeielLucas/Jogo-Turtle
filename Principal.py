@@ -4,22 +4,20 @@ import turtle
 import random
 import time
 
-# Variaveis usadas
-vidas = 3
-velocidadeObjeto = 0.4
-gasolina = 100
-velocidadeImagem = 0.7
-score = 0
-v = False
 
-# Abrir e configurar Janela
+velocidadeObjeto = 0
+gasolina = 100
+velocidadeImagem = 0
+score = 0
+colidir = False
+
+
 janela = turtle.Screen()
 janela.bgcolor('Lightgreen')
 janela.setup(width=1100, height=900)
 janela.title('Morte da tartaruga - Jogo de FUP')
-janela.tracer(0)  # Atualização de tela
+janela.tracer(0)
 
-# Adicionar estilos
 janela.addshape('Tartaruga.gif')
 janela.addshape('Coracao.gif')
 janela.addshape('comida.gif')
@@ -27,6 +25,7 @@ janela.addshape('canudo.gif')
 janela.addshape('background.gif')
 janela.addshape('background2.gif')
 janela.addshape('perder.gif')
+
 
 imagem = turtle.Turtle()
 imagem.penup()
@@ -40,8 +39,7 @@ imagem2.speed(0)
 imagem2.shape('background2.gif')
 imagem2.goto(0, 1197)
 
-# Definir os personagens
-personagem = turtle.Turtle()  # Cria personagem principal
+personagem = turtle.Turtle()
 personagem.speed(0)
 personagem.shape('Tartaruga.gif')
 personagem.penup()
@@ -54,7 +52,7 @@ combustivel.hideturtle()
 combustivel.goto(450, 0)
 combustivel.write(f'Fuel:\n {gasolina}', font=('Times', 22, 'bold'))
 
-obstaculo = turtle.Turtle()  # Cria o obstáculo
+obstaculo = turtle.Turtle()
 obstaculo.speed(0)
 obstaculo.penup()
 obstaculo.shape('canudo.gif')
@@ -78,7 +76,15 @@ mensagem.penup()
 mensagem.goto(-170, 0)
 
 
-# Funções
+def principal():
+    colisao_borda()
+    colisao_comida()
+    colisao_obstaculo()
+    animacoes_do_jogo(imagem, imagem2)
+    janela.update()
+    janela.ontimer(principal, 1000//75)
+
+
 def move_to_left():
     x = personagem.xcor()
     x -= 15
@@ -92,7 +98,7 @@ def move_to_right():
 
 
 def colisao_obstaculo():
-    global v
+    global colidir
     px = personagem.xcor()
     py = personagem.ycor()
     ox = obstaculo.xcor()
@@ -102,17 +108,17 @@ def colisao_obstaculo():
         obstaculo.goto(random.randint(-120, 120), 550)
     if distancia < 50:
         obstaculo.goto(random.randint(-120, 120), 550)
-        v = True
+        colidir = True
         stop()
 
 
 def colisao_borda():
-    global v
+    global colidir
     xP2 = personagem.xcor()
     if xP2 >= 180 or xP2 <= -165:
         stop()
-        v = True
-        time.sleep(1)
+        colidir = True
+        time.sleep(0.1)
         personagem.setx(0)
 
 
@@ -181,14 +187,14 @@ def stop():
 
 
 def start_game():
-    global velocidadeImagem, velocidadeObjeto, gasolina, v
-    velocidadeObjeto = 0.4
-    velocidadeImagem = 0.7
-    if v == True:
+    global velocidadeImagem, velocidadeObjeto, gasolina, colidir
+    velocidadeObjeto = 5
+    velocidadeImagem = 7
+    if colidir == True:
         gasolina -= 5
         combustivel.clear()
         combustivel.write(f'Fuel:\n {gasolina}', font=('Times', 22, 'bold'))
-        v = False
+        colidir = False
     mensagem.clear()
 
 
@@ -197,18 +203,13 @@ def perder():
     janela.bgpic('perder.gif')
 
 
-# Leitura teclas do teclado
-janela.listen()
 janela.onkeypress(move_to_left, 'Left')
 janela.onkeypress(move_to_right, 'Right')
 janela.onkeypress(start_game, 'space')
+janela.listen()
 
 stop()
+principal()
 
-# Loop do Jogo
-while True:
-    colisao_obstaculo()
-    colisao_borda()
-    colisao_comida()
-    animacoes_do_jogo(imagem, imagem2)
-    janela.update()
+
+janela.mainloop()
