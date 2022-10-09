@@ -1,4 +1,4 @@
-# Jeiel Lucas Dourado Cavalcante, aluno de Ciência da Computacao 2022.2 (1° semestre), matrícula 539039
+# Jeiel Lucas Dourado Cavalcante, aluno de Ciência da Computacao 2022.2 (1° semestre)
 
 import turtle
 import random
